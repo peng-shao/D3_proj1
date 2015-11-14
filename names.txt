@@ -46,15 +46,12 @@ NOTE: in our data set,the first column is given in 2. below, the second column i
      3. n_tokens_content:              Number of words in the content
      4. n_unique_tokens:               Rate of unique words in the content
      5. n_non_stop_words:              Rate of non-stop words in the content
-     6. n_non_stop_unique_tokens:      Rate of unique non-stop words in the
-                                       content
+     6. n_non_stop_unique_tokens:      Rate of unique non-stop words in the content
      7. num_hrefs:                     Number of links
-     8. num_self_hrefs:                Number of links to other articles
-                                       published by Mashable
+     8. num_self_hrefs:                Number of links to other articles published by Mashable
      9. num_imgs:                      Number of images
     10. num_videos:                    Number of videos
-    11. average_token_length:          Average length of the words in the
-                                       content
+    11. average_token_length:          Average length of the words in the content
     12. num_keywords:                  Number of keywords in the metadata
     13. data_channel_is_lifestyle:     Is data channel 'Lifestyle'?
     14. data_channel_is_entertainment: Is data channel 'Entertainment'?
@@ -71,12 +68,9 @@ NOTE: in our data set,the first column is given in 2. below, the second column i
     25. kw_min_avg:                    Avg. keyword (min. shares)
     26. kw_max_avg:                    Avg. keyword (max. shares)
     27. kw_avg_avg:                    Avg. keyword (avg. shares)
-    28. self_reference_min_shares:     Min. shares of referenced articles in
-                                       Mashable
-    29. self_reference_max_shares:     Max. shares of referenced articles in
-                                       Mashable
-    30. self_reference_avg_sharess:    Avg. shares of referenced articles in
-                                       Mashable
+    28. self_reference_min_shares:     Min. shares of referenced articles in Mashable
+    29. self_reference_max_shares:     Max. shares of referenced articles in Mashable
+    30. self_reference_avg_sharess:    Avg. shares of referenced articles in Mashable
     31. weekday_is_monday:             Was the article published on a Monday?
     32. weekday_is_tuesday:            Was the article published on a Tuesday?
     33. weekday_is_wednesday:          Was the article published on a Wednesday?
@@ -94,10 +88,8 @@ NOTE: in our data set,the first column is given in 2. below, the second column i
     45. global_sentiment_polarity:     Text sentiment polarity
     46. global_rate_positive_words:    Rate of positive words in the content
     47. global_rate_negative_words:    Rate of negative words in the content
-    48. rate_positive_words:           Rate of positive words among non-neutral
-                                       tokens
-    49. rate_negative_words:           Rate of negative words among non-neutral
-                                       tokens
+    48. rate_positive_words:           Rate of positive words among non-neutral tokens
+    49. rate_negative_words:           Rate of negative words among non-neutral tokens
     50. avg_positive_polarity:         Avg. polarity of positive words
     51. min_positive_polarity:         Min. polarity of positive words
     52. max_positive_polarity:         Max. polarity of positive words

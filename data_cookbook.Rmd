@@ -1,0 +1,35 @@
+---
+title: "Project_1_data_cookbook"
+author: "P. Shao"
+date: "November 14, 2015"
+output: html_document
+---
+# Load Data
+
+```{r,eval=FALSE,tidy=TRUE}
+news_raw <- read.table("./News_train.txt", header = FALSE)
+hill <- read.table("./Hill-Valley_train.txt", header = FALSE)
+news_names <- read.table("./names.txt", header = FALSE, skip = 44, nrows = 59, sep = ":", col.names = c("Name", "Description"))
+```
+
+# Scan Data
+```{r,eval=FALSE,tidy=TRUE}
+str(news_raw)
+```
+
+# Clean Data
+## Strategies:
+### 1.
+
+### 2.
+
+
+### 3.
+
+
+
+
+
+
+# Reference
+<https://rstudio-pubs-static.s3.amazonaws.com/122671_778c16d46da6489c9f88cd7c12b20ed3.html>

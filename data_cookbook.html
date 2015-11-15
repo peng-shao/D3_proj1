@@ -68,19 +68,60 @@ img {
 </div>
 
 
-<div id="load-data" class="section level1">
-<h1>Load Data</h1>
+<div id="loading-data" class="section level1">
+<h1>Loading Data</h1>
 <pre class="r"><code>news_raw &lt;- read.table(&quot;./News_train.txt&quot;, header = FALSE)
 hill &lt;- read.table(&quot;./Hill-Valley_train.txt&quot;, header = FALSE)
 news_names &lt;- read.table(&quot;./names.txt&quot;, header = FALSE, skip = 44, nrows = 59, 
     sep = &quot;:&quot;, col.names = c(&quot;Name&quot;, &quot;Description&quot;))</code></pre>
 </div>
-<div id="scan-data" class="section level1">
-<h1>Scan Data</h1>
-<pre class="r"><code>str(news_raw)</code></pre>
+<div id="basic-transformation" class="section level1">
+<h1>Basic transformation</h1>
+<ol style="list-style-type: decimal">
+<li>take the log of V59, saving into <code>news_reg</code>, and transform the V59 into factor varible, saving into <code>news_cls</code>, where &lt;=1100 is low, &gt;1100 and &lt;=2100 is med, &gt;2100 is high;</li>
+<li>combine V12 to V17, create a factor variable called <code>type</code>, with 7 levels;</li>
+<li>combine V30 to V36, create a factor variable called <code>weekday</code>, with 7 levels;</li>
+<li>Transform V37 into factor;</li>
+<li>Drop the columns: 12:17, 30:36, 59.</li>
+</ol>
+<pre class="r"><code>library(dplyr)
+types &lt;- c(sapply(strsplit(news_names[12:17, 1], &quot;_&quot;), &quot;[&quot;, 4), &quot;others&quot;)
+weekdays &lt;- sapply(strsplit(news_names[30:36, 1], &quot;_&quot;), &quot;[&quot;, 3)
+drops &lt;- c(12:17, 30:36, 59)
+
+news_reg &lt;- news_raw %&gt;%
+        mutate(log_res = log(V59), 
+               type = factor(cbind(V12, V13, V14, V15, V16, V17, 
+                                   !(V12|V13|V14|V15|V16|V17)) %*% 
+                                     matrix(1:length(types)), 
+                             levels = 1:length(types), 
+                             labels = types), 
+               weekday = factor(cbind(V30, V31, V32, V33, V34, V35, V36) %*% 
+                                        matrix(1:length(weekdays)), 
+                                levels = 1:length(weekdays), 
+                                labels = weekdays), 
+               V37 = factor(V37, levels = c(1, 0), labels = c(TRUE, FALSE))) %&gt;%
+        select(-drops)
+
+news_cls &lt;- news_raw %&gt;%
+        mutate(class_res = factor(cbind(V59&lt;=1100, V59&gt;1100&amp;V59&lt;=2100, V59&gt;2100) %*%
+                                          c(1, 2, 3), 
+                                  levels = 1:3, 
+                                  labels = c(&quot;low&quot;, &quot;med&quot;, &quot;high&quot;)), 
+               type = factor(cbind(V12, V13, V14, V15, V16, V17, 
+                                   !(V12|V13|V14|V15|V16|V17)) %*% 
+                                     matrix(1:length(types)), 
+                             levels = 1:length(types), 
+                             labels = types), 
+               weekday = factor(cbind(V30, V31, V32, V33, V34, V35, V36) %*% 
+                                        matrix(1:length(weekdays)), 
+                                levels = 1:length(weekdays), 
+                                labels = weekdays), 
+               V37 = factor(V37, levels = c(1, 0), labels = c(TRUE, FALSE))) %&gt;%
+        select(-drops)</code></pre>
 </div>
-<div id="clean-data" class="section level1">
-<h1>Clean Data</h1>
+<div id="tidying-data" class="section level1">
+<h1>Tidying Data</h1>
 <div id="strategies" class="section level2">
 <h2>Strategies:</h2>
 <div id="section" class="section level3">

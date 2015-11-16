@@ -14,11 +14,12 @@ news_names <- read.table("./names.txt", header = FALSE, skip = 44, nrows = 59, s
 
 # Basic transformation
 
-1. take the log of V59, saving into `news_reg`, and transform the V59 into factor varible, saving into `news_cls`, where <=1100 is low, >1100 and <=2100 is med, >2100 is high;
+1. take the log of V59, saving into `news_reg` named `log_res`, and transform the V59 into factor varible, saving into `news_cls` named `class_res`, where <=1100 is low, >1100 and <=2100 is med, >2100 is high;
 2. combine V12 to V17, create a factor variable called `type`, with 7 levels;
 3. combine V30 to V36, create a factor variable called `weekday`, with 7 levels;
 4. Transform V37 into factor;
-5. Drop the columns: 12:17, 30:36, 59.
+5. Drop the columns: 12:17, 30:36, 59;
+6. change the variables names.
 
 ```{r, eval=FALSE, tidy=FALSE}
 library(dplyr)
@@ -39,6 +40,7 @@ news_reg <- news_raw %>%
                                 labels = weekdays), 
                V37 = factor(V37, levels = c(1, 0), labels = c(TRUE, FALSE))) %>%
         select(-drops)
+names(news_reg)[1:45] <- sapply(strsplit(news_names[, 1], ". "), "[", 2)[-drops]
 
 news_cls <- news_raw %>%
         mutate(class_res = factor(cbind(V59<=1100, V59>1100&V59<=2100, V59>2100) %*%
@@ -56,19 +58,53 @@ news_cls <- news_raw %>%
                                 labels = weekdays), 
                V37 = factor(V37, levels = c(1, 0), labels = c(TRUE, FALSE))) %>%
         select(-drops)
-
+names(news_cls)[1:45] <- sapply(strsplit(news_names[, 1], ". "), "[", 2)[-drops]
 ```
 
-# Tidying Data
+# Tidying Data (Missing Values)
 ## Strategies:
-### 1. 
+### 1. No more actions
+```{r, eval=FALSE}
+news_reg1 <- news_reg
+news_cls1 <- news_cls
+```
+
+### 2. Remove the data with missing values(the number of words with content is zero)
+
+```{r, eval=FALSE}
+news_reg2 <- news_reg
+news_reg2 <- news_reg2[!(news_reg2$n_tokens_content == 0), ]
+news_cls2 <- news_cls
+news_cls2 <- news_cls2[!(news_cls2$n_tokens_content == 0), ]
+```
+
+### 3. Separate the data into two parts, zero part and non-zero part
+
+```{r, eval=FALSE}
+news_reg3 <- news_reg
+news_cls3 <- news_cls
+news_reg3_zero <- news_reg3[(news_reg3$n_tokens_content == 0), ]
+news_reg3_nonzero <- news_reg3[!(news_reg3$n_tokens_content == 0), ]
+news_cls3_zero <- news_cls3[(news_cls3$n_tokens_content == 0), ]
+news_cls3_nonzero <- news_cls3[!(news_cls3$n_tokens_content == 0), ]
+```
 
 
+### 4. Let the missing values be average
 
-### 2.
-
-
-### 3.
+```{r, eval=FALSE, tidy=FALSE}
+news_reg4 <- news_reg
+news_cls4 <- news_cls
+ind <- (news_reg4$n_tokens_content == 0)
+news_reg4[ind, 2] <- round(mean(news_reg4[!ind, 2]))
+news_reg4[ind, 3] <- mean(news_reg4[!ind, 3])
+news_reg4[ind, 4] <- mean(news_reg4[!ind, 4])
+news_reg4[ind, 5] <- mean(news_reg4[!ind, 5])
+news_cls4[ind, 2] <- round(mean(news_cls4[!ind, 2]))
+news_cls4[ind, 3] <- mean(news_cls4[!ind, 3])
+news_cls4[ind, 4] <- mean(news_cls4[!ind, 4])
+news_cls4[ind, 5] <- mean(news_cls4[!ind, 5])
+```
 
 
 

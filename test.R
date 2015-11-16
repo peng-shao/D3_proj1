@@ -1,3 +1,5 @@
+setwd("~/Documents/git/D3_proj1")
+rm(list = ls())
 news_raw <- read.table("./News_train.txt", header = FALSE)
 hill <- read.table("./Hill-Valley_train.txt", header = FALSE)
 news_names <- read.table("./names.txt", header = FALSE, skip = 44, nrows = 59, sep = ":", col.names = c("Name", "Description"), stringsAsFactors = FALSE, strip.white = TRUE)
@@ -20,6 +22,7 @@ news_reg <- news_raw %>%
                                 labels = weekdays), 
                V37 = factor(V37, levels = c(1, 0), labels = c(TRUE, FALSE))) %>%
         select(-drops)
+names(news_reg)[1:45] <- sapply(strsplit(news_names[, 1], ". "), "[", 2)[-drops]
 
 news_cls <- news_raw %>%
         mutate(class_res = factor(cbind(V59<=1100, V59>1100&V59<=2100, V59>2100) %*%
@@ -37,6 +40,33 @@ news_cls <- news_raw %>%
                                 labels = weekdays), 
                V37 = factor(V37, levels = c(1, 0), labels = c(TRUE, FALSE))) %>%
         select(-drops)
+names(news_cls)[1:45] <- sapply(strsplit(news_names[, 1], ". "), "[", 2)[-drops]
+
+news_reg1 <- news_reg
+news_cls1 <- news_cls
+news_reg2 <- news_reg
+news_reg2 <- news_reg2[!(news_reg2$n_tokens_content == 0), ]
+news_cls2 <- news_cls
+news_cls2 <- news_cls2[!(news_cls2$n_tokens_content == 0), ]
+
+news_reg3 <- news_reg
+news_cls3 <- news_cls
+news_reg3_zero <- news_reg3[(news_reg3$n_tokens_content == 0), ]
+news_reg3_nonzero <- news_reg3[!(news_reg3$n_tokens_content == 0), ]
+news_cls3_zero <- news_cls3[(news_cls3$n_tokens_content == 0), ]
+news_cls3_nonzero <- news_cls3[!(news_cls3$n_tokens_content == 0), ]
+
+news_reg4 <- news_reg
+news_cls4 <- news_cls
+ind <- (news_reg4$n_tokens_content == 0)
+news_reg4[ind, 2] <- round(mean(news_reg4[!ind, 2]))
+news_reg4[ind, 3] <- mean(news_reg4[!ind, 3])
+news_reg4[ind, 4] <- mean(news_reg4[!ind, 4])
+news_reg4[ind, 5] <- mean(news_reg4[!ind, 5])
+news_cls4[ind, 2] <- round(mean(news_cls4[!ind, 2]))
+news_cls4[ind, 3] <- mean(news_cls4[!ind, 3])
+news_cls4[ind, 4] <- mean(news_cls4[!ind, 4])
+news_cls4[ind, 5] <- mean(news_cls4[!ind, 5])
 
 
 

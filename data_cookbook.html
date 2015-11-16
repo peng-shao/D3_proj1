@@ -78,11 +78,12 @@ news_names &lt;- read.table(&quot;./names.txt&quot;, header = FALSE, skip = 44, 
 <div id="basic-transformation" class="section level1">
 <h1>Basic transformation</h1>
 <ol style="list-style-type: decimal">
-<li>take the log of V59, saving into <code>news_reg</code>, and transform the V59 into factor varible, saving into <code>news_cls</code>, where &lt;=1100 is low, &gt;1100 and &lt;=2100 is med, &gt;2100 is high;</li>
+<li>take the log of V59, saving into <code>news_reg</code> named <code>log_res</code>, and transform the V59 into factor varible, saving into <code>news_cls</code> named <code>class_res</code>, where &lt;=1100 is low, &gt;1100 and &lt;=2100 is med, &gt;2100 is high;</li>
 <li>combine V12 to V17, create a factor variable called <code>type</code>, with 7 levels;</li>
 <li>combine V30 to V36, create a factor variable called <code>weekday</code>, with 7 levels;</li>
 <li>Transform V37 into factor;</li>
-<li>Drop the columns: 12:17, 30:36, 59.</li>
+<li>Drop the columns: 12:17, 30:36, 59;</li>
+<li>change the variables names.</li>
 </ol>
 <pre class="r"><code>library(dplyr)
 types &lt;- c(sapply(strsplit(news_names[12:17, 1], &quot;_&quot;), &quot;[&quot;, 4), &quot;others&quot;)
@@ -102,6 +103,7 @@ news_reg &lt;- news_raw %&gt;%
                                 labels = weekdays), 
                V37 = factor(V37, levels = c(1, 0), labels = c(TRUE, FALSE))) %&gt;%
         select(-drops)
+names(news_reg)[1:45] &lt;- sapply(strsplit(news_names[, 1], &quot;. &quot;), &quot;[&quot;, 2)[-drops]
 
 news_cls &lt;- news_raw %&gt;%
         mutate(class_res = factor(cbind(V59&lt;=1100, V59&gt;1100&amp;V59&lt;=2100, V59&gt;2100) %*%
@@ -118,20 +120,47 @@ news_cls &lt;- news_raw %&gt;%
                                 levels = 1:length(weekdays), 
                                 labels = weekdays), 
                V37 = factor(V37, levels = c(1, 0), labels = c(TRUE, FALSE))) %&gt;%
-        select(-drops)</code></pre>
+        select(-drops)
+names(news_cls)[1:45] &lt;- sapply(strsplit(news_names[, 1], &quot;. &quot;), &quot;[&quot;, 2)[-drops]</code></pre>
 </div>
-<div id="tidying-data" class="section level1">
-<h1>Tidying Data</h1>
+<div id="tidying-data-missing-values" class="section level1">
+<h1>Tidying Data (Missing Values)</h1>
 <div id="strategies" class="section level2">
 <h2>Strategies:</h2>
-<div id="section" class="section level3">
-<h3>1.</h3>
+<div id="no-more-actions" class="section level3">
+<h3>1. No more actions</h3>
+<pre class="r"><code>news_reg1 &lt;- news_reg
+news_cls1 &lt;- news_cls</code></pre>
 </div>
-<div id="section-1" class="section level3">
-<h3>2.</h3>
+<div id="remove-the-data-with-missing-valuesthe-number-of-words-with-content-is-zero" class="section level3">
+<h3>2. Remove the data with missing values(the number of words with content is zero)</h3>
+<pre class="r"><code>news_reg2 &lt;- news_reg
+news_reg2 &lt;- news_reg2[!(news_reg2$n_tokens_content == 0), ]
+news_cls2 &lt;- news_cls
+news_cls2 &lt;- news_cls2[!(news_cls2$n_tokens_content == 0), ]</code></pre>
 </div>
-<div id="section-2" class="section level3">
-<h3>3.</h3>
+<div id="separate-the-data-into-two-parts-zero-part-and-non-zero-part" class="section level3">
+<h3>3. Separate the data into two parts, zero part and non-zero part</h3>
+<pre class="r"><code>news_reg3 &lt;- news_reg
+news_cls3 &lt;- news_cls
+news_reg3_zero &lt;- news_reg3[(news_reg3$n_tokens_content == 0), ]
+news_reg3_nonzero &lt;- news_reg3[!(news_reg3$n_tokens_content == 0), ]
+news_cls3_zero &lt;- news_cls3[(news_cls3$n_tokens_content == 0), ]
+news_cls3_nonzero &lt;- news_cls3[!(news_cls3$n_tokens_content == 0), ]</code></pre>
+</div>
+<div id="let-the-missing-values-be-average" class="section level3">
+<h3>4. Let the missing values be average</h3>
+<pre class="r"><code>news_reg4 &lt;- news_reg
+news_cls4 &lt;- news_cls
+ind &lt;- (news_reg4$n_tokens_content == 0)
+news_reg4[ind, 2] &lt;- round(mean(news_reg4[!ind, 2]))
+news_reg4[ind, 3] &lt;- mean(news_reg4[!ind, 3])
+news_reg4[ind, 4] &lt;- mean(news_reg4[!ind, 4])
+news_reg4[ind, 5] &lt;- mean(news_reg4[!ind, 5])
+news_cls4[ind, 2] &lt;- round(mean(news_cls4[!ind, 2]))
+news_cls4[ind, 3] &lt;- mean(news_cls4[!ind, 3])
+news_cls4[ind, 4] &lt;- mean(news_cls4[!ind, 4])
+news_cls4[ind, 5] &lt;- mean(news_cls4[!ind, 5])</code></pre>
 </div>
 </div>
 </div>

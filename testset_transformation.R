@@ -37,3 +37,5 @@ test_for_use_cls <- test %>%
 names(test_for_use_cls)[1:45] <- sapply(strsplit(news_names[, 1], ". "), "[", 2)[-drops]
 
 save(test_for_use_cls, test_for_use_reg, file = "./testsets.RData")
+
+
